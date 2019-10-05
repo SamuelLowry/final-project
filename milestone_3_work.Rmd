@@ -1,0 +1,38 @@
+---
+title: "Milestone 3"
+author: "Samuel Lowry"
+date: "10/4/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+library(janitor)
+library(tidyverse)
+library(readxl)
+```
+
+I am planning on helping with the David Hogg project, but due to the radio silence on his part this is my plan b. 
+
+I'm probably going to study global health in addition to datascience through the social sciences, so I thought I would pull in some World Bank and WHO data. My data can be found in the raw data file. One is the governmental health expenditures by country as a percent of GDP. The other is for education. I will probably add other expenditure data as well, but I thought it would be cool to track changes in spending per country and then contextualize those changes. 
+
+Below is a simple bar graph showing a random sample of 8 countries' health expenditures which I included just as a visual. A lot more is to come, but I just wanted something more than this text and my initial data. 
+```{r}
+education <- read_xls("API_SE.XPD.TOTL.GD.ZS_DS2_en_excel_v2_248171.xls", skip = 2) %>% clean_names()
+health <- read_xlsx("health.xlsx", skip = 2) %>% 
+  clean_names()
+health_sample <- health %>% 
+  sample_n(8)
+```
+
+```{r}
+health_sample %>% 
+  ggplot(aes(x = country, y = x2015)) +
+  geom_col(fill = "darkblue") +
+  labs(title = "Government Health Expenditures as Percentage of GDP",
+       subtitle = "Random Sample of 8 Countries",
+       caption = "Data from 2015",
+       x = "Country",
+       y = "Gov. Health Expenditure as Percentage of GDP")
+  
+```
