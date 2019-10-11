@@ -1,0 +1,76 @@
+---
+title: "Milestone 4"
+author: "Samuel Lowry"
+date: "10/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(janitor)
+library(gapminder)
+library(gganimate)
+library(png)
+library(tidyverse)
+library(reshape2)
+library(gapminder)
+library(readxl)
+```
+
+```{r}
+# This took so heckin long, but here I am. I made an animated plot showing education spending and GDP over the years. I had to mess with gapminder to make sure the columns I joined by were in the same format. 
+
+gapminder <- gapminder %>% 
+  mutate(year = as.character(year)) %>% 
+  mutate(country = as.character(country))
+
+health_new <- read_xlsx("health.xlsx", skip = 2) %>% 
+  melt(id.vars = "Country") %>% 
+  mutate(variable = as.character(variable)) %>% 
+  mutate(Country = as.character(Country))
+
+names(health_new) <- c("country", "year", "health_expenditure")
+
+#I read in the education file from the WHO/World bank and then melted it so that it was in the same format as gapminder. Then I got rid of the nonexistant data and mutated the same as gapminder in order to comebine the two. 
+  
+  education <- read_xls("API_SE.XPD.TOTL.GD.ZS_DS2_en_excel_v2_248171.xls", skip = 2) %>% 
+    melt(id.vars = c("Country Name", "Country Code", "Indicator Name", "Indicator Code")) %>% 
+    na.omit() %>% 
+    mutate(variable = as.character(variable)) %>% 
+    mutate("Country Code" = as.character("Country Code"))
+  
+#I added proper name because melt messes with names
+  
+names(education) <- c("country", "country_code", "indicator_name", "indicator_code", "year", "education_spending_gdp") 
+```
+
+```{r}
+# here is where it got funky. I joined education and gapminder by country and year and then added some needed columns with mutate. Then it was ready to be animated.
+
+complete <- full_join(education, gapminder, by = c("country", "year")) %>% 
+  na.omit() %>% 
+  mutate(year = as.integer(year)) %>% 
+  mutate(gdp = gdpPercap * pop) %>% 
+  mutate(education_spending = education_spending_gdp / 100 * gdp) %>% 
+  mutate(education_spending_per_cap = education_spending / pop)
+```
+
+```{r}
+# I modified the code from the gapminder animate activity in class and got this!
+
+complete %>% 
+  filter(continent %in% c("Americas", "Africa", "Asia", "Europe")) %>% 
+ ggplot(aes(x = education_spending_per_cap, y = gdpPercap, size = pop, color = country)) + 
+ geom_point(alpha = 0.75) +
+  scale_x_log10() +
+  scale_y_log10() +
+ scale_color_manual(values = country_colors) +
+ facet_wrap(~continent) + 
+ labs(title = "Education Spending and GDP (Per Capita): {frame_time}",
+  x = "Education Spending Per Capita",
+  y = "GDP Per Capita") +
+ transition_time(year) +
+ theme(legend.position = "none")
+```
+
+
