@@ -1,0 +1,15 @@
+---
+title: "Milestone 5"
+author: "Samuel Lowry"
+date: "10/18/2019"
+output: html_document
+---
+
+## About the Project: 
+While taking a class on global health, I became fascinated by the use of data to signpost growth/the lack thereof and how that data affects policy and how policy affects the data.  
+This project uses data from the World Health Organization and the World Bank in order to contextualize certain health crises around the world as well as showing the effects of certain governmental policies on the lives of its citizens.   
+More information is to come once the actual graphics and historical research is completed. 
+
+#### Contact and Code
+If you have any questions contact me at samueldlowry@gmail.com  
+  [Here is the link to my Github repo!](https://github.com/SamuelLowry/final-project)
